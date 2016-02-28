@@ -11,56 +11,82 @@
 
 "use strict";
 
-var NETASAD = NETASAD||{};
+var NETAS = NETAS||{};
 
-NETASAD.Events = [
+NETAS.Events = [
 	"Ringing",
 	"Answered",
 	"Hangup"
-];
-
-NETASAD.options = {
-	HostName: "",
-	AgentLoginId: "",
-	AgentAlternateDN: "",
-	Debug: false
-};
-
-NETASAD.listeners = {
+	];
 	
-	_listener: [],
+NETAS.AgentDesktop = {
+	
+	_options: {
+		Debug: false,
+		HostName: "",
+//		Authorization: Basic atob("username:password")
+		AgentAuth: ""
+		
+	},
+
+	_listeners: [],
 	
 	_debug: function(e) {
-		if (NETASAD.options.Debug)
+		if (this._options.Debug)
 			console.log(e);
+	},
+
+	
+	/*
+	 * public methods
+	 */
+	
+	option: function(option, value) {
+		
+		if (value === undefined) {
+			if (option === undefined || option === null)
+				return this._options;
+
+			return this._options.filter(
+					  function(o){
+						  return o
+					  });
+			
+			
+		}
+		
+		if (option.HostName !== undefined && option.HostName !== null) {
+			this._options = option;
+			
+		}
 	},
 	
 	addListener: function(event, callback) {
-		if (!NETASAD.Events.includes(event))
+		if (!NETAS.Events.includes(event))
 			throw "Unknown event name!  Enter a valid event name.";
-		
+
 		this.removeListener(event);
-		this._listener.push({event: event, callback: callback});
-		
-		this._debug(this._listener);
-		
+		this._listeners.push({event: event, callback: callback});
+
+		this._debug(this._listeners);
+
 	},
-	
+
 	removeListener: function(event) {
-		this._listener.filter(
+		this._listeners.filter(
 				  function(e) {
 					  return e.event === event;
 				  }).pop();
-		
-		this._debug(this._listener);
-		
+
+		this._debug(this._listeners);
+
 	},
-	
+
 	getListener: function(event) {
-		return this._listener.filter(
+		return this._listeners.filter(
 				  function(e) {
 					  return e.event === event;
 				  }).callback;
 	}
-};
 
+};

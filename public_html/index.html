@@ -17,17 +17,26 @@ and open the template in the editor.
 		
 		<script type="text/javascript">
 		
-		
-			NETASAD.options.Debug = true;
-			NETASAD.options.HostName = "localhost";
-			
-			NETASAD.listeners.addListener("Ringing", function(event){
+					  
+			NETAS.AgentDesktop.option({
+				Debug: true, 
+				HostName: "localhost", 
+				AgentAuth: btoa("1001:1001")
+			});
+
+			try {
+				NETAS.AgentDesktop.addListener("Ringings");
+			}
+			catch(e) {
+				console.log(e);
+			}
+
+			NETAS.AgentDesktop.addListener("Ringing", function(event){
 				console.log("RingingEvent fired.");
 				console.log(event);
 			});
 			
-			
-			
+			console.log(NETAS.AgentDesktop.option());
 			
 		</script>
 	</body>

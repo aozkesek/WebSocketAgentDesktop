@@ -19,8 +19,8 @@ and open the template in the editor.
 		
 					  
 			NETAS.AgentDesktop.setOption({
-				Debug: true, 
-				HostName: "localhost", 
+				Debug: true,  
+				Url: "ws://echo.websocket.org",
 				AgentAuth: btoa("1001:1001")
 			});
 			
@@ -33,6 +33,11 @@ and open the template in the editor.
 				console.log(e);
 			}
 
+			NETAS.AgentDesktop.addListener(NETAS.Events.LOGGEDIN, function(event){
+				console.log("LoggedInEvent fired&catched.");
+				console.log(event);
+			});
+			
 			NETAS.AgentDesktop.addListener(NETAS.Events.RINGING, function(event){
 				console.log("RingingEvent fired&catched.");
 				console.log(event);
@@ -40,6 +45,10 @@ and open the template in the editor.
 			
 			console.log(NETAS.AgentDesktop.getOption());
 			console.log(NETAS.AgentDesktop.getOption("Debug"));
+			
+			NETAS.AgentDesktop.login();
+			
+			NETAS.AgentDesktop.logout();
 			
 		</script>
 	</body>

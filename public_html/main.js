@@ -13,11 +13,11 @@
 
 var NETAS = NETAS||{};
 
-NETAS.Events = [
-	"Ringing",
-	"Answered",
-	"Hangup"
-	];
+NETAS.Events = {
+	RINGING: "RINGING",
+	ANSWERED: "ANSWERED",
+	HANGUP: "HANGUP"
+};
 	
 NETAS.AgentDesktop = {
 	
@@ -40,30 +40,28 @@ NETAS.AgentDesktop = {
 	/*
 	 * public methods
 	 */
+	getOption: function(option) {
+		if (option === undefined || option === null)
+			return this._options;
+		
+		if (this._options.hasOwnProperty(option))
+			return this._options[option];
+	},
 	
-	option: function(option, value) {
+	setOption: function(option, value) {
 		
 		if (value === undefined) {
-			if (option === undefined || option === null)
-				return this._options;
-
-			return this._options.filter(
-					  function(o){
-						  return o
-					  });
-			
-			
+			this._options = option;
+		}
+		else if (this._options.hasOwnProperty(option)) {
+			this._options[option] = value;
 		}
 		
-		if (option.HostName !== undefined && option.HostName !== null) {
-			this._options = option;
-			
-		}
 	},
 	
 	addListener: function(event, callback) {
-		if (!NETAS.Events.includes(event))
-			throw "Unknown event name!  Enter a valid event name.";
+		if (!NETAS.Events.hasOwnProperty(event))
+			throw "Unknown event!  Enter a valid event name or use NETAS.Events attributes.";
 
 		this.removeListener(event);
 		this._listeners.push({event: event, callback: callback});

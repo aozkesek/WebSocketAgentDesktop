@@ -18,11 +18,13 @@ and open the template in the editor.
 		<script type="text/javascript">
 		
 					  
-			NETAS.AgentDesktop.option({
+			NETAS.AgentDesktop.setOption({
 				Debug: true, 
 				HostName: "localhost", 
 				AgentAuth: btoa("1001:1001")
 			});
+			
+			NETAS.AgentDesktop.setOption("Debug", false);
 
 			try {
 				NETAS.AgentDesktop.addListener("Ringings");
@@ -31,12 +33,13 @@ and open the template in the editor.
 				console.log(e);
 			}
 
-			NETAS.AgentDesktop.addListener("Ringing", function(event){
-				console.log("RingingEvent fired.");
+			NETAS.AgentDesktop.addListener(NETAS.Events.RINGING, function(event){
+				console.log("RingingEvent fired&catched.");
 				console.log(event);
 			});
 			
-			console.log(NETAS.AgentDesktop.option());
+			console.log(NETAS.AgentDesktop.getOption());
+			console.log(NETAS.AgentDesktop.getOption("Debug"));
 			
 		</script>
 	</body>

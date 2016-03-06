@@ -21,7 +21,8 @@ and open the template in the editor.
 			NETAS.AgentDesktop.setOption({
 				Debug: true,  
 				Url: "ws://echo.websocket.org",
-				AgentAuth: btoa("1001:1001")
+				AgentAuth: btoa("1001:1001"),
+				AgentDN: "1001"
 			});
 			
 			NETAS.AgentDesktop.setOption("Debug", false);
@@ -33,22 +34,40 @@ and open the template in the editor.
 				console.log(e);
 			}
 
-			NETAS.AgentDesktop.addListener(NETAS.Events.LOGGEDIN, function(event){
-				console.log("LoggedInEvent fired&catched.");
+			NETAS.AgentDesktop.addListener(NETAS.Events.Connected, function(event){
+				console.log("ConnectedEvent fired&catched.");
 				console.log(event);
+				
+				NETAS.AgentDesktop.login();
+				
 			});
 			
-			NETAS.AgentDesktop.addListener(NETAS.Events.RINGING, function(event){
-				console.log("RingingEvent fired&catched.");
+			NETAS.AgentDesktop.addListener(NETAS.Events.Loggedin, function(event){
+				console.log("LoggedinEvent fired&catched.");
+				console.log(event);
+				
+				NETAS.AgentDesktop.logout();
+				
+			});
+			
+			NETAS.AgentDesktop.addListener(NETAS.Events.Loggedout, function(event){
+				console.log("LoggedoutEvent fired&catched.");
+				console.log(event);
+				
+				NETAS.AgentDesktop.disconnect();
+				
+			});
+			
+			NETAS.AgentDesktop.addListener(NETAS.Events.Disconnected, function(event){
+				console.log("DisconnectedEvent fired&catched.");
 				console.log(event);
 			});
 			
 			console.log(NETAS.AgentDesktop.getOption());
 			console.log(NETAS.AgentDesktop.getOption("Debug"));
 			
-			NETAS.AgentDesktop.login();
+			NETAS.AgentDesktop.connect();
 			
-			NETAS.AgentDesktop.logout();
 			
 		</script>
 	</body>

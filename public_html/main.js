@@ -29,22 +29,25 @@ NETAS.States = {
 	Connected: "Connected",
 	Disconnected: "Disconnected",
 	Loggedin: "Loggedin",
-	Loggedout: "Loggedout"
+	Loggedout: "Loggedout",
+	Ringing: "Ringing",
+	Hangup: "Hangup",
+	Answered: "Answered"
+	
 };
 
 
 	
 NETAS.AgentDesktop = {
 
-	_J_LOGIN: {},
-	_J_LOGOUT: {},
-	_J_REGISTER_EVENT: {},
+	_J_LOGIN: {AgentAuth: "", AgentDN: ""},
+	_J_LOGOUT: {AgentId: "", AgentDN: ""},
+	_J_REGISTER_EVENTS: {AgentId: "", AgentDN: "", Events: [""]},
 	
 	_options: {
 		Debug: false,
 		Url: "",
-//		Authorization: Basic atob("username:password")
-		AgentAuth: "",
+		AgentAuth: "",//		Authorization: Basic atob("username:password")
 		AgentDN: ""
 		
 	},
@@ -74,6 +77,8 @@ NETAS.AgentDesktop = {
 	
 	_fireEventCallback: function(eventName, event) {
 	
+		this._debug(event);
+		
 		this._listeners
 				  .filter(function(l){
 						return l.event === eventName; 
@@ -84,33 +89,51 @@ NETAS.AgentDesktop = {
 	},
 	
 	_onClose: function(event) {
-		console.log(event);
-		
+		this._state = NETAS.States.Disconnected;
+		this._fireEventCallback(NETAS.Events.Disconnected, event);
 	},
 	
 	_onError: function(event) {
-		console.log(event);
-	
+		this._fireEventCallback(NETAS.Events.Error, event);
 	},
 	
 	_onMessage: function(event) {
-		console.log(event);
-		
+		this._debug(event);
 		//
 		if (event.data !== undefined) {
 			var _data = JSON.parse(event.data);
-			if (_data.requestType !== undefined) {
-				this._fireEventCallback(_data.requestType, _data);
+			//{responseType: "", responseCode: 0, responseMessage: "", responseData: { ... }}
+			if (_data.responseType !== undefined) {
+				
+				switch(_data.responseType) {
+				case NETAS.Events.Loggedin:
+					this._state = NETAS.States.Loggedin;
+					break;
+				case NETAS.Events.Loggedout:
+					this._state = NETAS.States.Loggedout;
+					break;
+				case NETAS.Events.Ringing:
+					this._state = NETAS.States.Ringing;
+					break;
+				case NETAS.Events.Hangup:
+					this._state = NETAS.States.Hangup;
+					break;
+				case NETAS.Events.Answered:
+					this._state = NETAS.States.Answered;
+					break;
+					
+					
+				}
+				
+				this._fireEventCallback(_data.responseType, _data);
 			}
 		}
 		
 	},
 	
 	_onOpen: function(event) {
-		console.log(event);
-		
+		this._state = NETAS.States.Connected;
 		this._fireEventCallback(NETAS.Events.Connected, event);
-		
 	},
 	
 	/*
@@ -157,13 +180,6 @@ NETAS.AgentDesktop = {
 
 		},
 
-		getListener: function(event) {
-			return this._listeners.filter(
-					  function(e) {
-						  return e.event === event;
-					  }).callback;
-		},
-
 		connect: function() {
 			this._assert(this._options.Url === undefined || this._options.Url === null, "Url is null.");
 			this._assert(this._options.AgentAuth === undefined || this._options.AgentAuth === null, "AgentAuth is null.");
@@ -179,24 +195,33 @@ NETAS.AgentDesktop = {
 
 		login: function() {
 
+			this._J_LOGIN.AgentAuth = this._options.AgentAuth;
+			this._J_LOGIN.AgentDN = this._options.AgentDN;
+			
 			this._webSocket.send(JSON.stringify({
 				requestType: "LOGIN", 
-				requestData: { 
-					AgentAuth: this._options.AgentAuth 
-				}}));
+				requestData: this._J_LOGIN
+			}));
 
 		},
 
 		logout: function() {
 
-			this._assert(!this._isLoggedIn, "You are not logged in.");
+			this._assert(this._state, "You are not logged in.");
 
+			this._J_LOGOUT.AgentDN = this._options.AgentDN;
+			this._J_LOGOUT.AgentId = atob(this._options.AgentAuth).split(":")[0];
+			
 			this._webSocket.send(JSON.stringify({
 				requestType: "LOGOUT", 
-				requestData: { 
-					AgentAuth: this._options.AgentAuth 
-				}}));
+				requestData: this._J_LOGOUT
+			}));
 
+		},
+		
+		registerEvent: function(events) {
+			
+			
 		}
 	
 

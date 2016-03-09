@@ -66,6 +66,13 @@ NETAS.AgentDesktop = {
 			throw "Assertion failed: " + m;  
 	},
 	
+	_unbindws: function() {
+		this._webSocket.onclose = undefined;
+		this._webSocket.onerror = undefined;
+		this._webSocket.onmessage = undefined;
+		this._webSocket.onopen = undefined;
+	},
+	
 	_bindws: function() {
 		var _this = this;
 	
@@ -90,6 +97,7 @@ NETAS.AgentDesktop = {
 	
 	_onClose: function(event) {
 		this._state = NETAS.States.Disconnected;
+		this._unbindws();
 		this._fireEventCallback(NETAS.Events.Disconnected, event);
 	},
 	
@@ -190,7 +198,8 @@ NETAS.AgentDesktop = {
 		},
 
 		disconnect: function() {
-
+			
+			this._webSocket.close();
 		},
 
 		login: function() {

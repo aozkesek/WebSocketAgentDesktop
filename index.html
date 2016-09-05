@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<title>TODO supply a title</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script type="text/javascript" src="script/main.js"></script>
+	</head>
+	<body>
+      <div>TODO write content</div>
+		
+		
+		<script type="text/javascript">
+		
+					  
+			WSAGENT.AgentDesktop.setOption({
+				Debug: true,  
+				Url: "ws://echo.websocket.org",
+				AgentAuth: btoa("1001:1001"),
+				AgentDN: "1001"
+			});
+			
+			WSAGENT.AgentDesktop.setOption("Debug", false);
+
+			try {
+				WSAGENT.AgentDesktop.addListener("Ringings");
+			}
+			catch(e) {
+				console.log(e);
+			}
+
+			WSAGENT.AgentDesktop.addListener(WSAGENT.Events.Connected, function(event){
+				console.log("ConnectedEvent fired&catched.");
+				console.log(event);
+				
+				WSAGENT.AgentDesktop.login();
+				
+			});
+			
+			WSAGENT.AgentDesktop.addListener(WSAGENT.Events.Loggedin, function(event){
+				console.log("LoggedinEvent fired&catched.");
+				console.log(event);
+				
+				WSAGENT.AgentDesktop.logout();
+				
+			});
+			
+			WSAGENT.AgentDesktop.addListener(WSAGENT.Events.Loggedout, function(event){
+				console.log("LoggedoutEvent fired&catched.");
+				console.log(event);
+				
+				WSAGENT.AgentDesktop.disconnect();
+				
+			});
+			
+			WSAGENT.AgentDesktop.addListener(WSAGENT.Events.Disconnected, function(event){
+				console.log("DisconnectedEvent fired&catched.");
+				console.log(event);
+			});
+			
+			console.log(WSAGENT.AgentDesktop.getOption());
+			console.log(WSAGENT.AgentDesktop.getOption("Debug"));
+			
+			WSAGENT.AgentDesktop.connect();
+			
+			
+//			WSAGENT.AgentDesktop.disconnect();
+			
+			
+		</script>
+	</body>
+
+	
+	
+</html>

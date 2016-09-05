@@ -1,19 +1,17 @@
 /* 
- * NETAS - TGE36 
  * 
- * 
- * WebSocket Client for NETAS-JTAPI Server
+ * WebSocket Agent
  * 
  * Developer: Ahmet OZKESEK
- * e-mail: ozkesek@netas.com.tr; aozkesek@gmail.com
+ * e-mail: aozkesek@gmail.com
  * 
  */
 
 "use strict";
 
-var NETAS = NETAS||{};
+var WSAGENT = WSAGENT||{};
 
-NETAS.Events = {
+WSAGENT.Events = {
 	Connected: "Connected",
 	Disconnected: "Disconnected",
 	Loggedin: "Loggedin",
@@ -24,7 +22,7 @@ NETAS.Events = {
 	Error: "Error"
 };
 
-NETAS.States = {
+WSAGENT.States = {
 	Unknown: "Unknown",
 	Connected: "Connected",
 	Disconnected: "Disconnected",
@@ -38,7 +36,7 @@ NETAS.States = {
 
 
 	
-NETAS.AgentDesktop = {
+WSAGENT.AgentDesktop = {
 
 	_J_LOGIN: {AgentAuth: "", AgentDN: ""},
 	_J_LOGOUT: {AgentId: "", AgentDN: ""},
@@ -54,7 +52,7 @@ NETAS.AgentDesktop = {
 
 	_listeners: [],
 	_webSocket: null,
-	_state: NETAS.States.Unknown,
+	_state: WSAGENT.States.Unknown,
 	
 	_debug: function(e) {
 		if (this._options.Debug)
@@ -96,13 +94,13 @@ NETAS.AgentDesktop = {
 	},
 	
 	_onClose: function(event) {
-		this._state = NETAS.States.Disconnected;
+		this._state = WSAGENT.States.Disconnected;
 		this._unbindws();
-		this._fireEventCallback(NETAS.Events.Disconnected, event);
+		this._fireEventCallback(WSAGENT.Events.Disconnected, event);
 	},
 	
 	_onError: function(event) {
-		this._fireEventCallback(NETAS.Events.Error, event);
+		this._fireEventCallback(WSAGENT.Events.Error, event);
 	},
 	
 	_onMessage: function(event) {
@@ -114,20 +112,20 @@ NETAS.AgentDesktop = {
 			if (_data.responseType !== undefined) {
 				
 				switch(_data.responseType) {
-				case NETAS.Events.Loggedin:
-					this._state = NETAS.States.Loggedin;
+				case WSAGENT.Events.Loggedin:
+					this._state = WSAGENT.States.Loggedin;
 					break;
-				case NETAS.Events.Loggedout:
-					this._state = NETAS.States.Loggedout;
+				case WSAGENT.Events.Loggedout:
+					this._state = WSAGENT.States.Loggedout;
 					break;
-				case NETAS.Events.Ringing:
-					this._state = NETAS.States.Ringing;
+				case WSAGENT.Events.Ringing:
+					this._state = WSAGENT.States.Ringing;
 					break;
-				case NETAS.Events.Hangup:
-					this._state = NETAS.States.Hangup;
+				case WSAGENT.Events.Hangup:
+					this._state = WSAGENT.States.Hangup;
 					break;
-				case NETAS.Events.Answered:
-					this._state = NETAS.States.Answered;
+				case WSAGENT.Events.Answered:
+					this._state = WSAGENT.States.Answered;
 					break;
 					
 					
@@ -140,8 +138,8 @@ NETAS.AgentDesktop = {
 	},
 	
 	_onOpen: function(event) {
-		this._state = NETAS.States.Connected;
-		this._fireEventCallback(NETAS.Events.Connected, event);
+		this._state = WSAGENT.States.Connected;
+		this._fireEventCallback(WSAGENT.Events.Connected, event);
 	},
 	
 	/*
@@ -168,8 +166,8 @@ NETAS.AgentDesktop = {
 		},
 
 		addListener: function(event, callback) {
-			if (!NETAS.Events.hasOwnProperty(event))
-				throw "Unknown event!  Enter a valid event name or use NETAS.Events attributes.";
+			if (!WSAGENT.Events.hasOwnProperty(event))
+				throw "Unknown event!  Enter a valid event name or use WSAGENT.Events attributes.";
 
 			this.removeListener(event);
 			this._listeners.push({event: event, callback: callback});
